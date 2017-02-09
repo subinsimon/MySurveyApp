@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:tx="http://www.springframework.org/schema/tx" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx 
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+        
+        <mvc:annotation-driven/>
+        <context:component-scan base-package="com.mysurvey"/>
+        
+        <bean id="dataSource" class= "org.springframework.jndi.JndiObjectFactoryBean">
+                <property name="jndiName" value="java:/comp/env/jdbc/postgres"/>
+        </bean>
+        
+        <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        		<property name="dataSource" ref="dataSource"/>
+        		<property name="packagesToScan" value="com.mysurvey.entity"/>
+        		<property name="hibernateProperties">
+	        		<props>
+	        			<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+	        			<prop key="hibernate.show_sql">true</prop>
+	        			<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
+	        			<prop key="hibernate.cache.use_second_level_cache">true</prop>
+	        			<prop key="hibernate.cache.use_query_cache">true</prop>
+	        			<prop key="net.sf.ehcache.configurationResourceName">/ehcache_conf.xml</prop>
+	        		</props>
+        		</property>
+        </bean>
+        
+        <tx:annotation-driven transaction-manager="transactionManager"/>
+        <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        </bean>
+
+</beans>
